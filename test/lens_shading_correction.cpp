@@ -25,6 +25,12 @@ int main() {
   LSC(raw, config.lsc_intensity, config.lsc_minr, config.lsc_maxr,
       config.lsc_clip); // 镜头阴影矫正
 
+  // raw域降噪未实现
+  NRraw(raw); // noise reduction for raw image, not implemented
+
+  // 抗锯齿滤波
+  AAF(raw);
+
   ImageRGB rgb = CFA(raw, config.cfa_mode, config.bayer_pattern,
                      config.cfa_clip); // demosaicing
 
