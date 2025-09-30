@@ -1,16 +1,17 @@
 #include "MyISP.h"
 
 // RAW data processing
-// black level correction
+// black level correction 黑电平矫正 校正传感器固有的暗电流噪声
 void BLC(ImageRaw &raw, uint16_t r, uint16_t gr, uint16_t gb, uint16_t b,
          float alpha, float beta, BAYER_PATTERN bayer_pattern, uint16_t clip) {
   switch (bayer_pattern) {
   case BAYER_PATTERN_RGGB:
     for (int y = 0; y < raw.getHeight(); y += 2) {
       for (int x = 0; x < raw.getWidth(); x += 2) {
-        raw.at(y, x) += r;                                    // r
-        raw.at(y + 1, x + 1) += b;                            // b
-        raw.at(y, x + 1) += gr + alpha * raw.at(y, x);        // gr
+        // 以下是加操作，更像是黑电平补偿
+        raw.at(y, x) += r;                             // r
+        raw.at(y + 1, x + 1) += b;                     // b
+        raw.at(y, x + 1) += gr + alpha * raw.at(y, x); // gr 交叉通道补偿
         raw.at(y + 1, x) += gb + beta * raw.at(y + 1, x + 1); // gb
       }
     }

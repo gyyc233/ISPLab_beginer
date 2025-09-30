@@ -2,7 +2,7 @@
 #include <math.h>
 
 // RAW data processing
-// lens shading correction
+// lens shading correction 镜头阴影矫正
 void LSC(ImageRaw &raw, uint16_t intensity, int minR, int maxR, uint16_t clip) {
   if (minR < 0)
     minR = 0;
@@ -10,9 +10,12 @@ void LSC(ImageRaw &raw, uint16_t intensity, int minR, int maxR, uint16_t clip) {
     maxR = sqrt(pow(raw.getHeight() / 2, 2) + pow(raw.getWidth() / 2, 2));
   for (int y = 0; y < raw.getHeight(); y++) {
     for (int x = 0; x < raw.getWidth(); x++) {
+      // 计算当前像素到图像中心点的距离
       int r = sqrt(pow((y - raw.getHeight() / 2), 2) +
                    pow((x - raw.getWidth() / 2), 2));
+      // 矫正因子
       float factor = (r - minR) / (maxR - minR);
+      // 增益
       raw.at(y, x) = raw.at(y, x) * (1 + intensity * (factor + 0.5));
     }
   }

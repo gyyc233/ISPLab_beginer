@@ -13,8 +13,11 @@ ISPLab is an open-source and platform-free ISP pipeline converting 10-bit RAW da
 The pipeline of ISPLab includes following methods:
 - RAW data processing
     - Dead pixel correction (DPC)
+      - 用邻域像素梯度对屏幕坏点矫正
     - Black level correction (BLC)
+      - 黑点平补偿，传感器即使在完全黑暗的环境中也会产生一定的信号输出，这个基础偏移量就是黑电平
     - Lens shading correction (LSC)
+      - 镜头阴影矫正,补偿由镜头光学特性导致的图像亮度不均匀问题
     - Anti-aliasing filtering (AAF)
     - Auto white balance (AWB)
     - Chroma noise filtering (CNF)
