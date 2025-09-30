@@ -19,7 +19,9 @@ The pipeline of ISPLab includes following methods:
     - Lens shading correction (LSC)
       - 镜头阴影矫正,补偿由镜头光学特性导致的图像亮度不均匀问题
     - Anti-aliasing filtering (AAF)
+      - 低通滤波实现抗锯齿
     - Auto white balance (AWB)
+      - 自动白平衡
     - Chroma noise filtering (CNF)
 - Demosaicing
 - RGB image processing

@@ -6,6 +6,7 @@
 
 #define PI 3.1415926535
 
+// 色调与饱和度调整
 void HSC(ImageYUV &yuv, float hue, float saturation) {
   float lut_sin = sin(hue * PI / 180);
   float lut_cos = cos(hue * PI / 180);
@@ -14,14 +15,18 @@ void HSC(ImageYUV &yuv, float hue, float saturation) {
 
   for (int y = 0; y < yuv.getHeight(); y++) {
     for (int x = 0; x < yuv.getWidth(); x++) {
-      U = yuv.at(y, x).U;
-      V = yuv.at(y, x).V;
+      float U_orig = yuv.at(y, x).U;
+      float V_orig = yuv.at(y, x).V;
 
-      // Hue
-      U = (U - 128) * lut_cos + (V - 128) * lut_sin;
-      V = (V - 128) * lut_cos + (U - 128) * lut_sin;
+      // 减去偏移量（YUV格式中UV分量以128为中心）
+      float U_centered = U_orig - 128.0f;
+      float V_centered = V_orig - 128.0f;
 
-      // Saturation
+      // Hue　色度旋转
+      U = U_centered * lut_cos + V_centered * lut_sin;
+      V = -U_centered * lut_sin + V_centered * lut_sin;
+
+      // Saturation 饱和度调整后加回偏移
       U = saturation * (U) + 128;
       V = saturation * (V) + 128;
 

@@ -3,17 +3,22 @@
 #include <string.h>
 
 // 拜耳阵列去马赛克
+// 去马赛克是ISP管道中最关键的步骤之一，它直接影响最终图像的色彩准确性、细节保留和伪色抑制效果
 
-// Malvar算法是一种高质量的去马赛克方法
+// Malvar算法是一种高质量的去马赛克方法,使用5×5邻域进行高质量的彩色插值
 PixelRGB malvar(const char *is_color, float center, int y, int x, ImageRaw *img,
                 uint8_t cfa_clip) {
   float r = 0, g = 0, b = 0;
+  // 已知R，需要插值G和B
   if (strcmp(is_color, "r") == 0) {
     r = center;
+    // G分量插值,用了等效卷积核
     g = 4 * img->at(y, x) - img->at(y - 2, x) - img->at(y, x - 2) -
         img->at(y + 2, x) - img->at(y, x + 2) +
         2 * (img->at(y + 1, x) + img->at(y, x + 1) + img->at(y - 1, x) +
              img->at(y, x - 1));
+
+    // B分量插值 这里的等效卷积核与上面不同
     b = 6 * img->at(y, x) -
         3 *
             (img->at(y - 2, x) + img->at(y, x - 2) + img->at(y + 2, x) +
@@ -24,6 +29,8 @@ PixelRGB malvar(const char *is_color, float center, int y, int x, ImageRaw *img,
     g = g / 8;
     b = b / 8;
   }
+
+  // 已知Gr，需要插值R和B
   if (strcmp(is_color, "gr") == 0) {
     r = 5 * img->at(y, x) - img->at(y, x - 2) - img->at(y - 1, x - 1) -
         img->at(y + 1, x - 1) - img->at(y - 1, x + 1) - img->at(y + 1, x + 1) -
@@ -37,6 +44,8 @@ PixelRGB malvar(const char *is_color, float center, int y, int x, ImageRaw *img,
     r = r / 8;
     b = b / 8;
   }
+
+  // 已知Gb，需要插值R和B
   if (strcmp(is_color, "gb") == 0) {
     r = 5 * img->at(y, x) - img->at(y - 2, x) - img->at(y - 1, x - 1) -
         img->at(y - 1, x + 1) - img->at(y + 2, x) - img->at(y + 1, x - 1) -
@@ -50,6 +59,8 @@ PixelRGB malvar(const char *is_color, float center, int y, int x, ImageRaw *img,
     r = r / 8;
     b = b / 8;
   }
+
+  //
   if (strcmp(is_color, "b") == 0) {
     r = 6 * img->at(y, x) -
         3 *
@@ -66,6 +77,7 @@ PixelRGB malvar(const char *is_color, float center, int y, int x, ImageRaw *img,
     r = r / 8;
     g = g / 8;
   }
+
   PixelRGB pixel;
   if (r < 0)
     r = 0;
@@ -90,8 +102,8 @@ ImageRGB CFA(ImageRaw &img, DEMOSAICING_MODE cfa_mode,
   ImageRaw *img_pad = new ImageRaw(img);
   img_pad->padding(2, PADDING_MODE_REFLECT);
 
+  // 创建与原始RAW图像相同尺寸的RGB输出图像
   int raw_h = img.getHeight(), raw_w = img.getWidth();
-
   ImageRGB cfa_img(raw_h, raw_w);
 
   float r, gr, gb, b;

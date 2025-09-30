@@ -2,11 +2,21 @@
 #include <math.h>
 
 // RAW data processing
-// auto white balance
+// auto white balance 自动白平衡，矫正图像中的色温偏差
+
+/// @brief 自动白平衡
+/// @param raw
+/// @param r_gain r通道白平衡增益
+/// @param gr_gain gr通道白平衡增益
+/// @param gb_gain gb通道白平衡增益
+/// @param b_gain b通道白平衡增益
+/// @param bayer_pattern Bayer模式
+/// @param clip 裁剪
 void AWB(ImageRaw &raw, float r_gain, float gr_gain, float gb_gain,
          float b_gain, BAYER_PATTERN bayer_pattern, uint16_t clip) {
   for (int y = 0; y < raw.getHeight(); y += 2) {
     for (int x = 0; x < raw.getWidth(); x += 2) {
+      // 分通道增益应用
       switch (bayer_pattern) {
       case BAYER_PATTERN_RGGB:
         raw.at(y, x) *= r_gain;

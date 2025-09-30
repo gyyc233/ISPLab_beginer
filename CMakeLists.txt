@@ -31,6 +31,12 @@ target_link_libraries(black_level_correction isp_lab)
 add_executable(lens_shading_correction test/lens_shading_correction.cpp)
 target_link_libraries(lens_shading_correction isp_lab)
 
+add_executable(auto_white_balance test/auto_white_balance.cpp)
+target_link_libraries(auto_white_balance isp_lab)
+
+add_executable(rgb_yuv_test test/rgb_yuv_test.cpp)
+target_link_libraries(rgb_yuv_test isp_lab)
+
 # copy floder to install path
 set(build_data_include ${CMAKE_CURRENT_SOURCE_DIR}/build)
 execute_process( COMMAND ${CMAKE_COMMAND} -E copy_directory  ${CMAKE_CURRENT_SOURCE_DIR}/data ${build_data_include}/data)
